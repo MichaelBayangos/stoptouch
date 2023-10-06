@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:device_policy_controller/device_policy_controller.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 
 class ChildPage extends StatefulWidget {
   const ChildPage({super.key});
@@ -13,19 +14,33 @@ class ChildPage extends StatefulWidget {
 class _ChildPageState extends State<ChildPage> {
   final dbRef = FirebaseDatabase.instance.ref().child('Timer');
   final dbref1 = FirebaseDatabase.instance.ref().child('Restriction');
+  final dbref2 = FirebaseDatabase.instance.ref().child('Notifcation');
   final dpc = DevicePolicyController.instance;
   String timerValue = '';
   String restrictionValue = '';
+  String notif = '';
   Timer? timer;
   Timer? restriction;
   Timer? delay;
+  final int openDelay = 3;
+
   @override
   void initState() {
     super.initState();
+    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+      if (!isAllowed) {
+        AwesomeNotifications().requestPermissionToSendNotifications();
+      }
+    });
 
     dbref1.onValue.listen((event) {
       setState(() {
         restrictionValue = event.snapshot.value.toString();
+      });
+    });
+    dbref2.onValue.listen((event) {
+      setState(() {
+        notif = event.snapshot.value.toString();
       });
     });
     dbRef.onValue.listen(
@@ -33,7 +48,7 @@ class _ChildPageState extends State<ChildPage> {
         setState(() {
           timerValue = event.snapshot.value.toString();
           timer?.cancel();
-          int seconds = int.tryParse(timerValue) ?? 0;
+          int seconds = int.tryParse(timerValue)! * 60;
 
           setState(() {
             if (seconds > 0) {
@@ -42,11 +57,14 @@ class _ChildPageState extends State<ChildPage> {
                   if (seconds > 0) {
                     seconds--;
                     timerValue = seconds.toString();
+                    if (seconds == 30) {
+                      triggerNotif();
+                    }
                   } else {
                     timer.cancel();
                     dpc.lockDevice();
                     restriction?.cancel();
-                    int resTime = int.tryParse(restrictionValue) ?? 0;
+                    int resTime = int.tryParse(restrictionValue)! * 60;
                     if (resTime > 0) {
                       restriction = Timer.periodic(const Duration(seconds: 1),
                           (restriction) {
@@ -55,7 +73,7 @@ class _ChildPageState extends State<ChildPage> {
                             resTime--;
                             restrictionValue = resTime.toString();
                             if (resTime > 0) {
-                              delay = Timer(const Duration(seconds: 3), () {
+                              delay = Timer(Duration(seconds: openDelay), () {
                                 dpc.lockDevice();
                               });
                             } else {
@@ -73,6 +91,16 @@ class _ChildPageState extends State<ChildPage> {
         });
       },
     );
+  }
+
+  triggerNotif() {
+    AwesomeNotifications().createNotification(
+        content: NotificationContent(
+      id: 10,
+      channelKey: 'basic_channel',
+      title: 'Warning Notification',
+      body: notif,
+    ));
   }
 
   @override
@@ -116,10 +144,8 @@ class _ChildPageState extends State<ChildPage> {
                             const Text(
                                 'Your Parents/guardian set time how long you will use your phone until it force lock'),
                             const SizedBox(height: 60),
-                            Text(
-                              'Timer: $timerValue',
-                              style: const TextStyle(color: Colors.white),
-                            ),
+                            Text('Time remaining: $timerValue',
+                                style: const TextStyle(color: Colors.white)),
                           ],
                         ),
                       ),
@@ -146,8 +172,8 @@ class _ChildPageState extends State<ChildPage> {
                                 'Your Parents/guardian set your time how long you will not able to use your phone.'),
                             const SizedBox(height: 60),
                             Text(
-                              'Restrction: $restrictionValue',
-                              style: const TextStyle(color: Colors.redAccent),
+                              'Restrction remaining: $restrictionValue',
+                              style: const TextStyle(color: Colors.white),
                             ),
                           ],
                         ),

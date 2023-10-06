@@ -12,17 +12,10 @@ class _ParentMainPageState extends State<ParentMainPage> {
   final _formKey = GlobalKey<FormState>();
   late String timerValue = '';
   late String restrictionValue = '';
+  late String notif = '';
   final dbRef = FirebaseDatabase.instance.ref().child('Timer');
   final dbref1 = FirebaseDatabase.instance.ref().child('Restriction');
-
-  @override
-  void initState() {
-    super.initState();
-
-    dbRef.onValue.listen((event) {
-      timerValue = event.snapshot.value.toString();
-    });
-  }
+  final dbref2 = FirebaseDatabase.instance.ref().child('Notifcation');
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +40,7 @@ class _ParentMainPageState extends State<ParentMainPage> {
                     'Child Device Setup',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(height: 60),
+                  const SizedBox(height: 25),
                   Container(
                       padding: const EdgeInsets.only(left: 30),
                       alignment: Alignment.centerLeft,
@@ -65,13 +58,14 @@ class _ParentMainPageState extends State<ParentMainPage> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(30, 30, 30, 5),
+                    padding: const EdgeInsets.fromLTRB(30, 15, 30, 0),
                     child: TextFormField(
+                      maxLength: 2,
                       keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
-                        labelText: 'Time',
+                        labelText: 'Phone limit here',
                         border: OutlineInputBorder(),
-                        hintText: 'Timer for child device lock funtion',
+                        hintText: 'Minutes format',
                         hintStyle: TextStyle(fontSize: 16),
                         errorStyle: TextStyle(color: Colors.red),
                         contentPadding:
@@ -86,7 +80,7 @@ class _ParentMainPageState extends State<ParentMainPage> {
                       onSaved: (value) => timerValue = value!,
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 5),
                   Container(
                       padding: const EdgeInsets.only(left: 30),
                       alignment: Alignment.centerLeft,
@@ -104,14 +98,14 @@ class _ParentMainPageState extends State<ParentMainPage> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(30, 30, 30, 80),
+                    padding: const EdgeInsets.fromLTRB(30, 15, 30, 0),
                     child: TextFormField(
+                      maxLength: 2,
                       keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
-                        labelText: 'Time Restriction',
+                        labelText: 'Restriction time here',
                         border: OutlineInputBorder(),
-                        hintText:
-                            'Restrtiction time before the device unlock properly',
+                        hintText: 'Minutes format',
                         hintStyle: TextStyle(fontSize: 16),
                         errorStyle: TextStyle(color: Colors.red),
                         contentPadding:
@@ -124,6 +118,44 @@ class _ParentMainPageState extends State<ParentMainPage> {
                         return null;
                       },
                       onSaved: (value) => restrictionValue = value!,
+                    ),
+                  ),
+                  Container(
+                      padding: const EdgeInsets.only(left: 30),
+                      alignment: Alignment.centerLeft,
+                      child: const Text(
+                        'Warning Notification',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      )),
+                  const SizedBox(height: 10),
+                  Container(
+                    padding: const EdgeInsets.only(left: 40, right: 40),
+                    alignment: Alignment.centerLeft,
+                    child: const Text(
+                      'Set A short message for Notification that will warn the child device.',
+                      style: TextStyle(fontSize: 11),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(30, 15, 30, 80),
+                    child: TextFormField(
+                      maxLength: 25,
+                      decoration: const InputDecoration(
+                        labelText: 'Warning notification here',
+                        border: OutlineInputBorder(),
+                        hintText: 'short message',
+                        hintStyle: TextStyle(fontSize: 16),
+                        errorStyle: TextStyle(color: Colors.red),
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please Enter shor message';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) => notif = value!,
                     ),
                   ),
                   ElevatedButton(
@@ -140,6 +172,7 @@ class _ParentMainPageState extends State<ParentMainPage> {
                         _formKey.currentState!.save();
                         dbRef.set(timerValue);
                         dbref1.set(restrictionValue);
+                        dbref2.set(notif);
                         showDialog(
                           context: context,
                           builder: (context) {
@@ -161,10 +194,9 @@ class _ParentMainPageState extends State<ParentMainPage> {
                     },
                     child: const Text(
                       'Set',
-                      style: TextStyle(color: Colors.black),
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
-                  const SizedBox(height: 90),
                 ],
               ),
             ),
