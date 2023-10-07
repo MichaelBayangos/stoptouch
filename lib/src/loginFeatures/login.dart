@@ -19,7 +19,11 @@ class _SignUpState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _auth = FirebaseAuth.instance;
   final dbRef = FirebaseDatabase.instance.ref().child('Users');
+  bool isLoading = false;
   void _signIn() async {
+    setState(() {
+      isLoading = true;
+    });
     try {
       await _auth.signInWithEmailAndPassword(
           email: txtEmail, password: txtPassword);
@@ -51,6 +55,9 @@ class _SignUpState extends State<LoginPage> {
     } catch (e) {
       debugPrint(e.toString());
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -112,34 +119,39 @@ class _SignUpState extends State<LoginPage> {
                       validator: validatePassword,
                     ),
                     const SizedBox(height: 40),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                _formKey.currentState!.save();
-                                _signIn();
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadiusDirectional.circular(10),
+                    isLoading
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                            color: Colors.greenAccent,
+                          ))
+                        : Row(
+                            children: [
+                              Expanded(
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    if (_formKey.currentState!.validate()) {
+                                      _formKey.currentState!.save();
+                                      _signIn();
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blue,
+                                    elevation: 0,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadiusDirectional.circular(10),
+                                    ),
+                                    padding: const EdgeInsets.fromLTRB(
+                                        30, 20, 30, 20),
+                                  ),
+                                  child: const Text(
+                                    'Log in',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
                               ),
-                              padding:
-                                  const EdgeInsets.fromLTRB(30, 20, 30, 20),
-                            ),
-                            child: const Text(
-                              'Log in',
-                              style: TextStyle(color: Colors.white),
-                            ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
                     TextButton(
                         onPressed: () {
                           Navigator.push(
