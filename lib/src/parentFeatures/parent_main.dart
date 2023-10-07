@@ -137,13 +137,13 @@ class _ParentMainPageState extends State<ParentMainPage> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(30, 15, 30, 80),
+                    padding: const EdgeInsets.fromLTRB(30, 15, 30, 50),
                     child: TextFormField(
                       maxLength: 25,
                       decoration: const InputDecoration(
-                        labelText: 'Warning notification here',
+                        labelText: 'Put your message here',
                         border: OutlineInputBorder(),
-                        hintText: 'short message',
+                        hintText: 'Make it short',
                         hintStyle: TextStyle(fontSize: 16),
                         errorStyle: TextStyle(color: Colors.red),
                         contentPadding:

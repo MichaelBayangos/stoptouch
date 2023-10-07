@@ -22,7 +22,6 @@ class _ChildPageState extends State<ChildPage> {
   Timer? timer;
   Timer? restriction;
   Timer? delay;
-  final int openDelay = 3;
 
   @override
   void initState() {
@@ -32,7 +31,6 @@ class _ChildPageState extends State<ChildPage> {
         AwesomeNotifications().requestPermissionToSendNotifications();
       }
     });
-
     dbref1.onValue.listen((event) {
       setState(() {
         restrictionValue = event.snapshot.value.toString();
@@ -49,31 +47,31 @@ class _ChildPageState extends State<ChildPage> {
           timerValue = event.snapshot.value.toString();
           timer?.cancel();
           int seconds = int.tryParse(timerValue)! * 60;
-
+          triggerNotif();
           setState(() {
             if (seconds > 0) {
               timer = Timer.periodic(const Duration(seconds: 1), (timer) {
                 setState(() {
-                  if (seconds > 0) {
+                  if (seconds != 0) {
                     seconds--;
                     timerValue = seconds.toString();
                     if (seconds == 30) {
-                      triggerNotif();
+                      warningNotif();
                     }
                   } else {
                     timer.cancel();
                     dpc.lockDevice();
                     restriction?.cancel();
                     int resTime = int.tryParse(restrictionValue)! * 60;
-                    if (resTime > 0) {
+                    if (resTime != 0) {
                       restriction = Timer.periodic(const Duration(seconds: 1),
                           (restriction) {
                         setState(() {
-                          if (resTime > 0) {
+                          if (resTime != 0) {
                             resTime--;
                             restrictionValue = resTime.toString();
-                            if (resTime > 0) {
-                              delay = Timer(Duration(seconds: openDelay), () {
+                            if (resTime != 0) {
+                              delay = Timer(const Duration(seconds: 3), () {
                                 dpc.lockDevice();
                               });
                             } else {
@@ -98,8 +96,18 @@ class _ChildPageState extends State<ChildPage> {
         content: NotificationContent(
       id: 10,
       channelKey: 'basic_channel',
-      title: 'Warning Notification',
+      title: 'Message From Parent',
       body: notif,
+    ));
+  }
+
+  warningNotif() {
+    AwesomeNotifications().createNotification(
+        content: NotificationContent(
+      id: 10,
+      channelKey: 'basic_channel',
+      title: 'Warning Notification',
+      body: 'You Only Have 30 seconds remaing',
     ));
   }
 
