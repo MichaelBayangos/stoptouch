@@ -173,6 +173,7 @@ class _ParentMainPageState extends State<ParentMainPage> {
                         dbRef.set(timerValue);
                         dbref1.set(restrictionValue);
                         dbref2.set(notif);
+                        _formKey.currentState!.reset();
                         showDialog(
                           context: context,
                           builder: (context) {
