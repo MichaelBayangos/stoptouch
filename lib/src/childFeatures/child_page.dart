@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
@@ -12,24 +13,32 @@ class ChildPage extends StatefulWidget {
 }
 
 class _ChildPageState extends State<ChildPage> {
-  final dbRef = FirebaseDatabase.instance.ref().child('Timer');
-  final dbref1 = FirebaseDatabase.instance.ref().child('Restriction');
-  final dbref2 = FirebaseDatabase.instance.ref().child('Notifcation');
+  final _auth = FirebaseAuth.instance;
   String timerValue = '';
   String restrictionValue = '';
   String notif = '';
   Timer? timer;
   Timer? restriction;
-  Timer? delay;
 
   @override
   void initState() {
     super.initState();
+    final User user = _auth.currentUser!;
+    final userId = user.uid;
+    final dbRef =
+        FirebaseDatabase.instance.ref().child('Users/$userId/rules/timer');
+    final dbref1 = FirebaseDatabase.instance
+        .ref()
+        .child('Users/$userId/rules/restriction');
+    final dbref2 =
+        FirebaseDatabase.instance.ref().child('Users/$userId/rules/notif');
+
     AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
       if (!isAllowed) {
         AwesomeNotifications().requestPermissionToSendNotifications();
       }
     });
+
     dbref1.onValue.listen((event) {
       setState(() {
         restrictionValue = event.snapshot.value.toString();
@@ -49,7 +58,7 @@ class _ChildPageState extends State<ChildPage> {
           int seconds = int.tryParse(timerValue)! * 60;
           triggerNotif();
           setState(() {
-            if (seconds > 0) {
+            if (seconds != 0) {
               timer = Timer.periodic(const Duration(seconds: 1), (timer) {
                 setState(() {
                   if (seconds != 0) {
@@ -60,9 +69,11 @@ class _ChildPageState extends State<ChildPage> {
                     }
                   } else {
                     timer.cancel();
+                    dbRef.set(0);
                     DevicePolicyManager.lockNow();
                     restriction?.cancel();
                     int resTime = int.tryParse(restrictionValue)! * 60;
+                    setState(() {});
                     if (resTime != 0) {
                       restriction = Timer.periodic(const Duration(seconds: 1),
                           (restriction) {
@@ -70,13 +81,12 @@ class _ChildPageState extends State<ChildPage> {
                           if (resTime != 0) {
                             resTime--;
                             restrictionValue = resTime.toString();
-                            if (resTime != 0) {
-                              delay = Timer(const Duration(seconds: 3), () {
-                                DevicePolicyManager.lockNow();
-                              });
-                            } else {
-                              restriction.cancel();
-                            }
+                            Timer(const Duration(seconds: 3), () {
+                              DevicePolicyManager.lockNow();
+                            });
+                          } else {
+                            restriction.cancel();
+                            dbref1.set(0);
                           }
                         });
                       });
@@ -114,6 +124,7 @@ class _ChildPageState extends State<ChildPage> {
   @override
   void dispose() {
     timer?.cancel();
+    restriction?.cancel();
     super.dispose();
   }
 
@@ -132,7 +143,7 @@ class _ChildPageState extends State<ChildPage> {
                     height: 100,
                     width: 200,
                   ),
-                  const SizedBox(height: 80),
+                  const SizedBox(height: 60),
                   Padding(
                     padding: const EdgeInsets.only(left: 50, right: 50),
                     child: Card(
@@ -186,6 +197,27 @@ class _ChildPageState extends State<ChildPage> {
                           ],
                         ),
                       ),
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Pairing Key',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          _auth.currentUser!.uid,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        const SizedBox(height: 60),
+                      ],
                     ),
                   ),
                 ],

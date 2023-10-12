@@ -13,10 +13,7 @@ class _ParentMainPageState extends State<ParentMainPage> {
   late String timerValue = '';
   late String restrictionValue = '';
   late String notif = '';
-  final dbRef = FirebaseDatabase.instance.ref().child('Timer');
-  final dbref1 = FirebaseDatabase.instance.ref().child('Restriction');
-  final dbref2 = FirebaseDatabase.instance.ref().child('Notifcation');
-
+  late String name = '';
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -41,6 +38,34 @@ class _ParentMainPageState extends State<ParentMainPage> {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 25),
+                  Container(
+                      padding: const EdgeInsets.only(left: 30),
+                      alignment: Alignment.centerLeft,
+                      child: const Text(
+                        'Child Device Pairing',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      )),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(30, 15, 30, 10),
+                    child: TextFormField(
+                      decoration: const InputDecoration(
+                        labelText: 'Child Device ID',
+                        border: OutlineInputBorder(),
+                        hintStyle: TextStyle(fontSize: 16),
+                        errorStyle: TextStyle(color: Colors.red),
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please Enter time limit';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) => name = value!,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
                   Container(
                       padding: const EdgeInsets.only(left: 30),
                       alignment: Alignment.centerLeft,
@@ -80,7 +105,6 @@ class _ParentMainPageState extends State<ParentMainPage> {
                       onSaved: (value) => timerValue = value!,
                     ),
                   ),
-                  const SizedBox(height: 5),
                   Container(
                       padding: const EdgeInsets.only(left: 30),
                       alignment: Alignment.centerLeft,
@@ -124,7 +148,7 @@ class _ParentMainPageState extends State<ParentMainPage> {
                       padding: const EdgeInsets.only(left: 30),
                       alignment: Alignment.centerLeft,
                       child: const Text(
-                        'Warning Notification',
+                        'Message Notification',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       )),
                   const SizedBox(height: 10),
@@ -137,7 +161,7 @@ class _ParentMainPageState extends State<ParentMainPage> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(30, 15, 30, 50),
+                    padding: const EdgeInsets.fromLTRB(30, 15, 30, 5),
                     child: TextFormField(
                       maxLength: 25,
                       decoration: const InputDecoration(
@@ -170,10 +194,12 @@ class _ParentMainPageState extends State<ParentMainPage> {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
-                        dbRef.set(timerValue);
-                        dbref1.set(restrictionValue);
-                        dbref2.set(notif);
-                        _formKey.currentState!.reset();
+                        final dbr = FirebaseDatabase.instance.ref('Users');
+                        dbr.child(name).child('rules').set({
+                          'timer': timerValue,
+                          'restriction': restrictionValue,
+                          'notif': notif
+                        });
                         showDialog(
                           context: context,
                           builder: (context) {
