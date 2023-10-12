@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:device_policy_controller/device_policy_controller.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:device_policy_manager/device_policy_manager.dart';
 
 class ChildPage extends StatefulWidget {
   const ChildPage({super.key});
@@ -15,7 +15,6 @@ class _ChildPageState extends State<ChildPage> {
   final dbRef = FirebaseDatabase.instance.ref().child('Timer');
   final dbref1 = FirebaseDatabase.instance.ref().child('Restriction');
   final dbref2 = FirebaseDatabase.instance.ref().child('Notifcation');
-  final dpc = DevicePolicyController.instance;
   String timerValue = '';
   String restrictionValue = '';
   String notif = '';
@@ -43,6 +42,7 @@ class _ChildPageState extends State<ChildPage> {
     });
     dbRef.onValue.listen(
       (event) {
+        DevicePolicyManager.requestPermession();
         setState(() {
           timerValue = event.snapshot.value.toString();
           timer?.cancel();
@@ -60,7 +60,7 @@ class _ChildPageState extends State<ChildPage> {
                     }
                   } else {
                     timer.cancel();
-                    dpc.lockDevice();
+                    DevicePolicyManager.lockNow();
                     restriction?.cancel();
                     int resTime = int.tryParse(restrictionValue)! * 60;
                     if (resTime != 0) {
@@ -72,7 +72,7 @@ class _ChildPageState extends State<ChildPage> {
                             restrictionValue = resTime.toString();
                             if (resTime != 0) {
                               delay = Timer(const Duration(seconds: 3), () {
-                                dpc.lockDevice();
+                                DevicePolicyManager.lockNow();
                               });
                             } else {
                               restriction.cancel();
