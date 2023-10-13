@@ -24,7 +24,7 @@ class _ChildPageState extends State<ChildPage> {
   void initState() {
     super.initState();
     final User user = _auth.currentUser!;
-    final userId = user.uid;
+    final userId = user.uid.substring(0, 6);
     final dbRef =
         FirebaseDatabase.instance.ref().child('Users/$userId/rules/timer');
     final dbref1 = FirebaseDatabase.instance
@@ -213,7 +213,7 @@ class _ChildPageState extends State<ChildPage> {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          _auth.currentUser!.uid,
+                          _auth.currentUser!.uid.substring(0, 6),
                           style: const TextStyle(fontSize: 16),
                         ),
                         const SizedBox(height: 60),

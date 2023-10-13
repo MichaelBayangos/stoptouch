@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,9 +22,11 @@ class _SignUpPageState extends State<SignUpPage> {
   void _save() async {
     try {
       await _auth.createUserWithEmailAndPassword(
-          email: txtEmail, password: txtPassword);
+        email: txtEmail,
+        password: txtPassword,
+      );
       final User? user = _auth.currentUser;
-      final userid = user!.uid;
+      final userid = user!.uid.substring(0, 6);
       databaseReference.child(userid).set({'name': name, 'role': role});
       log(userid);
     } catch (e) {

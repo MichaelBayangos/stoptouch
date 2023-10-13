@@ -28,7 +28,7 @@ class _SignUpState extends State<LoginPage> {
       await _auth.signInWithEmailAndPassword(
           email: txtEmail, password: txtPassword);
       final User user = _auth.currentUser!;
-      final userId = user.uid;
+      final userId = user.uid.substring(0, 6);
       final ref = FirebaseDatabase.instance.ref();
       final snapshot = await ref.child('Users/$userId/role').get();
       if (snapshot.exists) {
