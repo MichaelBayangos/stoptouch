@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +17,18 @@ class _ParentMainPageState extends State<ParentMainPage> {
   late String restrictionValue = '';
   late String notif = '';
   late String name = '';
+
+  triggerNotif() {
+    AwesomeNotifications().createNotification(
+        content: NotificationContent(
+      id: 10,
+      channelKey: 'basic_channel',
+      title: 'Reminder ',
+      body: 'you can extend your child device',
+      wakeUpScreen: true,
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -217,6 +232,9 @@ class _ParentMainPageState extends State<ParentMainPage> {
                             );
                           },
                         );
+                        Timer(const Duration(seconds: 30), () {
+                          triggerNotif();
+                        });
                       }
                     },
                     child: const Text(
