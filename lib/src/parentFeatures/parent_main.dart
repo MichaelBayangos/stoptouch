@@ -32,22 +32,23 @@ class _ParentMainPageState extends State<ParentMainPage> {
                     alignment: Alignment.center,
                     child: Image.asset('assets/stoptouch.png'),
                   ),
-                  const SizedBox(height: 60),
+                  const SizedBox(height: 40),
                   const Text(
                     'Child Device Setup',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(height: 25),
+                  const SizedBox(height: 18),
                   Container(
                       padding: const EdgeInsets.only(left: 30),
                       alignment: Alignment.centerLeft,
                       child: const Text(
-                        'Child Device Pairing',
+                        'DEVICE PAIRING',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       )),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(30, 15, 30, 10),
                     child: TextFormField(
+                      maxLength: 6,
                       decoration: const InputDecoration(
                         labelText: 'Child Device ID',
                         border: OutlineInputBorder(),
@@ -65,7 +66,6 @@ class _ParentMainPageState extends State<ParentMainPage> {
                       onSaved: (value) => name = value!,
                     ),
                   ),
-                  const SizedBox(height: 10),
                   Container(
                       padding: const EdgeInsets.only(left: 30),
                       alignment: Alignment.centerLeft,
@@ -161,7 +161,7 @@ class _ParentMainPageState extends State<ParentMainPage> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(30, 15, 30, 5),
+                    padding: const EdgeInsets.fromLTRB(30, 15, 30, 15),
                     child: TextFormField(
                       maxLength: 25,
                       decoration: const InputDecoration(
