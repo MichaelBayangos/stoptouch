@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -53,6 +52,35 @@ class _SignUpState extends State<LoginPage> {
         }
       }
     } catch (e) {
+      setState(() {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Center(
+                child: Text(
+                  'Failed to Login!',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+              content: const Text(
+                'You Entered wrong username or password!! please try again.',
+                textAlign: TextAlign.center,
+                style: TextStyle(wordSpacing: 1.5, letterSpacing: 2),
+              ),
+              actions: [
+                Center(
+                  child: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Ok')),
+                )
+              ],
+            );
+          },
+        );
+      });
       debugPrint(e.toString());
     }
     setState(() {

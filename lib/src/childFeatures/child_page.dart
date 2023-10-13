@@ -50,8 +50,11 @@ class _ChildPageState extends State<ChildPage> {
       });
     });
     dbRef.onValue.listen(
-      (event) {
-        DevicePolicyManager.requestPermession();
+      (event) async {
+        final isPermitted = await DevicePolicyManager.isPermissionGranted();
+        if (!isPermitted) {
+          DevicePolicyManager.requestPermession();
+        }
         setState(() {
           timerValue = event.snapshot.value.toString();
           timer?.cancel();
