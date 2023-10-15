@@ -28,6 +28,7 @@ class _ParentMainPageState extends State<ParentMainPage> {
       wakeUpScreen: true,
     ));
   }
+
   @override
   void initState() {
     super.initState();
@@ -35,7 +36,8 @@ class _ParentMainPageState extends State<ParentMainPage> {
       if (!isAllowed) {
         AwesomeNotifications().requestPermissionToSendNotifications();
       }
-  });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
