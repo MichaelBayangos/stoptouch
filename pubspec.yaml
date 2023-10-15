@@ -39,6 +39,7 @@ dependencies:
   firebase_database: ^10.2.5
   awesome_notifications: ^0.8.2
   device_policy_manager: ^0.0.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
