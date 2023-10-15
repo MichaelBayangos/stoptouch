@@ -36,16 +36,16 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Image.asset('assets/stoptouch.png', height: 100, width: 200),
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(
-                child: Image.asset('assets/stoptouch.png',
-                    height: 100, width: 150),
-              ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
               const Padding(
                 padding: EdgeInsets.only(left: 35),
                 child: Text(

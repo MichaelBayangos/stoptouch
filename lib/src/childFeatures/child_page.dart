@@ -150,7 +150,7 @@ class _ChildPageState extends State<ChildPage> {
                   padding: const EdgeInsets.only(top: 30, left: 50, right: 50),
                   child: Card(
                     elevation: 20,
-                    color: Colors.blueAccent,
+                    color: const Color.fromARGB(255, 77, 180, 240),
                     child: Padding(
                       padding: const EdgeInsets.all(15),
                       child: Column(
