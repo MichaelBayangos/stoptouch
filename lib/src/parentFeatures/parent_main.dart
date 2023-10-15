@@ -24,7 +24,19 @@ class _ParentMainPageState extends State<ParentMainPage> {
       id: 10,
       channelKey: 'basic_channel',
       title: 'Reminder ',
-      body: 'you can extend your child device',
+      body: 'you can still extend your child device time.',
+      wakeUpScreen: true,
+    ));
+  }
+
+  triggerNotifs() {
+    AwesomeNotifications().createNotification(
+        content: NotificationContent(
+      id: 11,
+      channelKey: 'basic_channel',
+      title: 'Reminder ',
+      body:
+          'your child device locked, remember once it locked it cannot be opened unless restrictions lifted.',
       wakeUpScreen: true,
     ));
   }
@@ -34,34 +46,39 @@ class _ParentMainPageState extends State<ParentMainPage> {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-        body: SafeArea(
-          child: SingleChildScrollView(
+        appBar: AppBar(
+          title: Image.asset(
+            'assets/stoptouch.png',
+            height: 200,
+            width: 200,
+          ),
+          centerTitle: true,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+        ),
+        body: SingleChildScrollView(
+          child: SafeArea(
             child: Form(
               key: _formKey,
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Image.asset('assets/stoptouch.png'),
-                  ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 15),
                   const Text(
                     'Child Device Setup',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 18),
                   Container(
-                      padding: const EdgeInsets.only(left: 30),
+                      margin: const EdgeInsets.only(left: 30),
                       alignment: Alignment.centerLeft,
                       child: const Text(
                         'DEVICE PAIRING',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 12),
                       )),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(30, 15, 30, 10),
+                    padding: const EdgeInsets.fromLTRB(30, 15, 30, 0),
                     child: TextFormField(
                       maxLength: 6,
                       decoration: const InputDecoration(
@@ -82,18 +99,19 @@ class _ParentMainPageState extends State<ParentMainPage> {
                     ),
                   ),
                   Container(
-                      padding: const EdgeInsets.only(left: 30),
+                      margin: const EdgeInsets.only(left: 30),
                       alignment: Alignment.centerLeft,
                       child: const Text(
                         'PHONE LIMIT',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 12),
                       )),
                   const SizedBox(height: 10),
                   Container(
-                    padding: const EdgeInsets.only(left: 40, right: 40),
+                    margin: const EdgeInsets.only(left: 40, right: 40),
                     alignment: Alignment.centerLeft,
                     child: const Text(
-                      'Set limit how long to use phone then screen will automatically lock once the set time is reached.',
+                      'Set limit how long your children can use his/her phone.',
                       style: TextStyle(fontSize: 11),
                     ),
                   ),
@@ -121,15 +139,16 @@ class _ParentMainPageState extends State<ParentMainPage> {
                     ),
                   ),
                   Container(
-                      padding: const EdgeInsets.only(left: 30),
+                      margin: const EdgeInsets.only(left: 30),
                       alignment: Alignment.centerLeft,
                       child: const Text(
                         'RESTRICTION LIMIT',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 12),
                       )),
                   const SizedBox(height: 10),
                   Container(
-                    padding: const EdgeInsets.only(left: 40, right: 40),
+                    margin: const EdgeInsets.only(left: 40, right: 40),
                     alignment: Alignment.centerLeft,
                     child: const Text(
                       'Set how long you want to lock your device screen, activation after phone limit is done.',
@@ -160,23 +179,24 @@ class _ParentMainPageState extends State<ParentMainPage> {
                     ),
                   ),
                   Container(
-                      padding: const EdgeInsets.only(left: 30),
+                      margin: const EdgeInsets.only(left: 30),
                       alignment: Alignment.centerLeft,
                       child: const Text(
                         'Message Notification',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 12),
                       )),
                   const SizedBox(height: 10),
                   Container(
-                    padding: const EdgeInsets.only(left: 40, right: 40),
+                    margin: const EdgeInsets.only(left: 40, right: 40),
                     alignment: Alignment.centerLeft,
                     child: const Text(
-                      'Set A short message for Notification that will warn the child device.',
+                      'Set A short message in a form of notification.',
                       style: TextStyle(fontSize: 11),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(30, 15, 30, 15),
+                    padding: const EdgeInsets.fromLTRB(30, 15, 30, 0),
                     child: TextFormField(
                       maxLength: 25,
                       decoration: const InputDecoration(
@@ -197,6 +217,7 @@ class _ParentMainPageState extends State<ParentMainPage> {
                       onSaved: (value) => notif = value!,
                     ),
                   ),
+                  const SizedBox(height: 16),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
@@ -232,7 +253,9 @@ class _ParentMainPageState extends State<ParentMainPage> {
                             );
                           },
                         );
-                        Timer(const Duration(seconds: 30), () {
+                        Timer(
+                            Duration(seconds: int.parse(timerValue) * 60 ~/ 2),
+                            () {
                           triggerNotif();
                         });
                       }
@@ -242,6 +265,7 @@ class _ParentMainPageState extends State<ParentMainPage> {
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
+                  const SizedBox(height: 10),
                 ],
               ),
             ),

@@ -122,8 +122,6 @@ class _ChildPageState extends State<ChildPage> {
     ));
   }
 
-
-
   @override
   void dispose() {
     timer?.cancel();
@@ -136,15 +134,18 @@ class _ChildPageState extends State<ChildPage> {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
+        appBar: AppBar(
+          title: Image.asset(
+            'assets/stoptouch.png',
+            height: 200,
+            width: 200,
+          ),
+          centerTitle: true,
+        ),
         body: SafeArea(
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Image.asset(
-                  'assets/stoptouch.png',
-                  height: 100,
-                  width: 200,
-                ),
                 Padding(
                   padding: const EdgeInsets.only(top: 30, left: 50, right: 50),
                   child: Card(
@@ -164,8 +165,7 @@ class _ChildPageState extends State<ChildPage> {
                           const Text(
                               'Your Parents/guardian set time how long you will use your phone until it force lock'),
                           const SizedBox(height: 60),
-                          Text('Time remaining $timerValue',
-                              style: const TextStyle(color: Colors.white))
+                          Text('Time remaining $timerValue')
                         ],
                       ),
                     ),
@@ -198,20 +198,22 @@ class _ChildPageState extends State<ChildPage> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 15),
                 Padding(
                   padding: const EdgeInsets.all(15),
-                  child: Column(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const SizedBox(height: 8),
                       const Text(
-                        'Pairing Key',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20),
+                        'Pairing ID:   ',
+                        style: TextStyle(fontSize: 16),
                       ),
                       const SizedBox(height: 10),
                       Text(
                         _auth.currentUser!.uid.substring(0, 6),
-                        style: const TextStyle(fontSize: 16),
+                        style: const TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
