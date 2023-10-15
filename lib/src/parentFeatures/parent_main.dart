@@ -28,18 +28,14 @@ class _ParentMainPageState extends State<ParentMainPage> {
       wakeUpScreen: true,
     ));
   }
-
-  triggerNotifs() {
-    AwesomeNotifications().createNotification(
-        content: NotificationContent(
-      id: 11,
-      channelKey: 'basic_channel',
-      title: 'Reminder ',
-      body:
-          'your child device locked, remember once it locked it cannot be opened unless restrictions lifted.',
-      wakeUpScreen: true,
-    ));
-  }
+  @override
+  void initState() {
+    super.initState();
+    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+      if (!isAllowed) {
+        AwesomeNotifications().requestPermissionToSendNotifications();
+      }
+  });
 
   @override
   Widget build(BuildContext context) {
