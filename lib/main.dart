@@ -1,7 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:stoptouch/src/childFeatures/child_page.dart';
 import 'package:stoptouch/src/loginFeatures/login.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:stoptouch/src/loginFeatures/singup_page.dart';
+import 'package:stoptouch/src/parentFeatures/parent_main.dart';
+import 'package:stoptouch/src/splash.dart';
 
 Future<void> main() async {
   AwesomeNotifications().initialize(
@@ -13,6 +17,7 @@ Future<void> main() async {
           channelDescription: 'Warning Notification for users',
           playSound: true,
           enableVibration: true,
+          channelShowBadge: true,
         )
       ],
       debug: true);
@@ -34,7 +39,14 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
         useMaterial3: true,
       ),
-      home: const LoginPage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const SplashScreen(),
+        '/log': (context) => const LoginPage(),
+        '/signup': (context) => const SignUpPage(),
+        '/child': (context) => const ChildPage(),
+        '/parent': (context) => const ParentMainPage(),
+      },
     );
   }
 }

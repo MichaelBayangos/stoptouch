@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:stoptouch/src/loginFeatures/login.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -21,9 +20,11 @@ class _SignUpPageState extends State<SignUpPage> {
   void _save() async {
     try {
       await _auth.createUserWithEmailAndPassword(
-          email: txtEmail, password: txtPassword);
+        email: txtEmail,
+        password: txtPassword,
+      );
       final User? user = _auth.currentUser;
-      final userid = user!.uid;
+      final userid = user!.uid.substring(0, 6);
       databaseReference.child(userid).set({'name': name, 'role': role});
       log(userid);
     } catch (e) {
@@ -34,16 +35,16 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Image.asset('assets/stoptouch.png', height: 100, width: 200),
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(
-                child: Image.asset('assets/stoptouch.png',
-                    height: 100, width: 150),
-              ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
               const Padding(
                 padding: EdgeInsets.only(left: 35),
                 child: Text(
@@ -129,12 +130,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                 if (_formKey.currentState!.validate()) {
                                   _formKey.currentState!.save();
                                   _save();
-                                  Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const LoginPage(),
-                                      ),
-                                      (route) => false);
+                                  Navigator.pushNamedAndRemoveUntil(
+                                      context, '/log', (route) => false);
                                 }
                               },
                               style: ElevatedButton.styleFrom(

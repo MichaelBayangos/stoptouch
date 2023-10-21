@@ -1,11 +1,7 @@
 import 'dart:developer';
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:stoptouch/src/childFeatures/child_page.dart';
-import 'package:stoptouch/src/loginFeatures/singup_page.dart';
-import 'package:stoptouch/src/parentFeatures/parent_main.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -28,31 +24,50 @@ class _SignUpState extends State<LoginPage> {
       await _auth.signInWithEmailAndPassword(
           email: txtEmail, password: txtPassword);
       final User user = _auth.currentUser!;
-      final userId = user.uid;
+      final userId = user.uid.substring(0, 6);
       final ref = FirebaseDatabase.instance.ref();
       final snapshot = await ref.child('Users/$userId/role').get();
       if (snapshot.exists) {
         if (snapshot.value == 'parent') {
           // ignore: use_build_context_synchronously
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const ParentMainPage(),
-              ),
-              (route) => false);
+          Navigator.pushReplacementNamed(context, '/parent');
         } else if (snapshot.value == 'child') {
           // ignore: use_build_context_synchronously
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const ChildPage(),
-              ),
-              (route) => false);
+          Navigator.pushReplacementNamed(context, '/child');
         } else {
           log('Dont have data in database');
         }
       }
     } catch (e) {
+      setState(() {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Center(
+                child: Text(
+                  'Failed to Login!',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+              content: const Text(
+                'You Entered wrong username or password!! please try again.',
+                textAlign: TextAlign.center,
+                style: TextStyle(wordSpacing: 1.5, letterSpacing: 2),
+              ),
+              actions: [
+                Center(
+                  child: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Ok')),
+                )
+              ],
+            );
+          },
+        );
+      });
       debugPrint(e.toString());
     }
     setState(() {
@@ -63,16 +78,16 @@ class _SignUpState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Image.asset('assets/stoptouch.png', height: 200, width: 200),
+        centerTitle: true,
+      ),
       body: SafeArea(
           child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child:
-                  Image.asset('assets/stoptouch.png', height: 100, width: 150),
-            ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
             const Padding(
               padding: EdgeInsets.only(left: 35),
               child: Text(
@@ -154,11 +169,7 @@ class _SignUpState extends State<LoginPage> {
                           ),
                     TextButton(
                         onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const SignUpPage(),
-                              ));
+                          Navigator.pushNamed(context, '/signup');
                         },
                         child: const Text('Create new account')),
                   ],

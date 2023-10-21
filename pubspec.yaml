@@ -37,8 +37,9 @@ dependencies:
   firebase_core: ^2.15.1
   firebase_auth: ^4.8.0
   firebase_database: ^10.2.5
-  device_policy_controller: ^0.0.3+1
   awesome_notifications: ^0.8.2
+  device_policy_manager: ^0.0.1
+  flutter_spinkit: ^5.2.0
 
 dev_dependencies:
   flutter_test:
@@ -77,9 +78,9 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   # fonts:
-  #   - family: Schyler
+  #   - family: hello
   #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: assets/fonts.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro
