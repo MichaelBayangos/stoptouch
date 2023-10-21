@@ -2,9 +2,6 @@ import 'dart:developer';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:stoptouch/src/childFeatures/child_page.dart';
-import 'package:stoptouch/src/loginFeatures/singup_page.dart';
-import 'package:stoptouch/src/parentFeatures/parent_main.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -33,20 +30,10 @@ class _SignUpState extends State<LoginPage> {
       if (snapshot.exists) {
         if (snapshot.value == 'parent') {
           // ignore: use_build_context_synchronously
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const ParentMainPage(),
-              ),
-              (route) => false);
+          Navigator.pushReplacementNamed(context, '/parent');
         } else if (snapshot.value == 'child') {
           // ignore: use_build_context_synchronously
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const ChildPage(),
-              ),
-              (route) => false);
+          Navigator.pushReplacementNamed(context, '/child');
         } else {
           log('Dont have data in database');
         }
@@ -182,11 +169,7 @@ class _SignUpState extends State<LoginPage> {
                           ),
                     TextButton(
                         onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const SignUpPage(),
-                              ));
+                          Navigator.pushNamed(context, '/signup');
                         },
                         child: const Text('Create new account')),
                   ],

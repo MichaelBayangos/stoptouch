@@ -55,49 +55,52 @@ class _ChildPageState extends State<ChildPage> {
         if (!isPermitted) {
           DevicePolicyManager.requestPermession();
         }
-        setState(() {
-          timerValue = event.snapshot.value.toString();
-          timer?.cancel();
-          int seconds = int.tryParse(timerValue)! * 60;
-          triggerNotif();
+        if (mounted) {
           setState(() {
-            if (seconds != 0) {
-              timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-                setState(() {
-                  if (seconds != 0) {
-                    seconds--;
-                    timerValue = seconds.toString();
-                    if (seconds == 30) {
-                      warningNotif();
-                    }
-                  } else {
-                    timer.cancel();
-                    dbRef.set(0);
-                    DevicePolicyManager.lockNow();
-                    restriction?.cancel();
-                    int resTime = int.tryParse(restrictionValue)! * 60;
-                    setState(() {});
-                    if (resTime != 0) {
-                      restriction = Timer.periodic(const Duration(seconds: 1),
-                          (restriction) {
-                        setState(() {
-                          if (resTime != 0) {
-                            resTime--;
-                            restrictionValue = resTime.toString();
-                            DevicePolicyManager.lockNow();
-                          } else {
-                            restriction.cancel();
-                            dbref1.set(0);
-                          }
+            timerValue = event.snapshot.value.toString();
+            timer?.cancel();
+            int seconds = int.tryParse(timerValue)! * 60;
+            triggerNotif();
+            setState(() {
+              if (seconds != 0) {
+                timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+                  setState(() {
+                    if (seconds != 0) {
+                      seconds--;
+                      timerValue = seconds.toString();
+                      if (seconds == 30) {
+                        warningNotif();
+                      }
+                    } else {
+                      timer.cancel();
+                      dbRef.set(0);
+                      dbref2.set('Time Phone Usage has been Set');
+                      DevicePolicyManager.lockNow();
+                      restriction?.cancel();
+                      int resTime = int.tryParse(restrictionValue)! * 60;
+                      setState(() {});
+                      if (resTime != 0) {
+                        restriction = Timer.periodic(const Duration(seconds: 1),
+                            (restriction) {
+                          setState(() {
+                            if (resTime != 0) {
+                              resTime--;
+                              restrictionValue = resTime.toString();
+                              DevicePolicyManager.lockNow();
+                            } else {
+                              restriction.cancel();
+                              dbref1.set(0);
+                            }
+                          });
                         });
-                      });
+                      }
                     }
-                  }
+                  });
                 });
-              });
-            }
+              }
+            });
           });
-        });
+        }
       },
     );
   }
@@ -131,95 +134,101 @@ class _ChildPageState extends State<ChildPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Image.asset(
-            'assets/stoptouch.png',
-            height: 200,
-            width: 200,
-          ),
-          centerTitle: true,
+    return Scaffold(
+      appBar: AppBar(
+        title: Image.asset(
+          'assets/stoptouch.png',
+          height: 200,
+          width: 200,
         ),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 30, left: 50, right: 50),
-                  child: Card(
-                    elevation: 20,
-                    color: const Color.fromARGB(255, 77, 180, 240),
-                    child: Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const SizedBox(height: 8),
-                          const Text(
-                            'PHONE LIMIT',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 10),
-                          const Text(
-                              'Your Parents/guardian set time how long you will use your phone until it force lock'),
-                          const SizedBox(height: 60),
-                          Text('Time remaining $timerValue')
-                        ],
-                      ),
+        centerTitle: true,
+        // this is the logout button
+        // actions: [
+        //   IconButton(
+        //       onPressed: () {
+        //         FirebaseAuth.instance.signOut();
+        //         Navigator.pushReplacementNamed(context, '/log');
+        //       },
+        //       icon: const Icon(Icons.power_settings_new_outlined))
+        // ],
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 30, left: 50, right: 50),
+                child: Card(
+                  elevation: 20,
+                  color: const Color.fromARGB(255, 77, 180, 240),
+                  child: Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(height: 8),
+                        const Text(
+                          'PHONE LIMIT',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                            'Your Parents/guardian set time how long you will use your phone until it force lock'),
+                        const SizedBox(height: 60),
+                        Text('Time remaining: $timerValue')
+                      ],
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20, left: 50, right: 50),
-                  child: Card(
-                    elevation: 20,
-                    color: Colors.greenAccent,
-                    child: Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const SizedBox(height: 8),
-                          const Text(
-                            'RESTRICTION TIME',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 10),
-                          const Text(
-                              'Your Parents/guardian set your time how long you will not able to use your phone.'),
-                          const SizedBox(height: 60),
-                          Text(
-                            'restriction remaining $restrictionValue',
-                          ),
-                        ],
-                      ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 20, left: 50, right: 50),
+                child: Card(
+                  elevation: 20,
+                  color: Colors.greenAccent,
+                  child: Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(height: 8),
+                        const Text(
+                          'RESTRICTION TIME',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                            'Your Parents/guardian set your time how long you will not able to use your phone.'),
+                        const SizedBox(height: 60),
+                        Text(
+                          'Restriction remaining: $restrictionValue',
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 15),
-                Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Pairing ID:   ',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        _auth.currentUser!.uid.substring(0, 6),
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
+              ),
+              const SizedBox(height: 15),
+              Padding(
+                padding: const EdgeInsets.all(15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Pairing ID:   ',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      _auth.currentUser!.uid.substring(0, 6),
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
