@@ -13,8 +13,8 @@ class ParentMainPage extends StatefulWidget {
 
 class _ParentMainPageState extends State<ParentMainPage> {
   final _formKey = GlobalKey<FormState>();
-  late String timerValue = '';
-  late String restrictionValue = '';
+  late int timerValue;
+  late int restrictionValue;
   late String notif = '';
   late String name = '';
 
@@ -141,7 +141,7 @@ class _ParentMainPageState extends State<ParentMainPage> {
                       }
                       return null;
                     },
-                    onSaved: (value) => timerValue = value!,
+                    onSaved: (value) => timerValue = int.parse(value!),
                   ),
                 ),
                 Container(
@@ -181,7 +181,7 @@ class _ParentMainPageState extends State<ParentMainPage> {
                       }
                       return null;
                     },
-                    onSaved: (value) => restrictionValue = value!,
+                    onSaved: (value) => restrictionValue = int.parse(value!),
                   ),
                 ),
                 Container(
@@ -259,8 +259,7 @@ class _ParentMainPageState extends State<ParentMainPage> {
                           );
                         },
                       );
-                      Timer(Duration(seconds: int.parse(timerValue) * 60 ~/ 2),
-                          () {
+                      Timer(Duration(seconds: (timerValue) * 60 ~/ 2), () {
                         triggerNotif();
                       });
                     }

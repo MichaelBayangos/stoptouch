@@ -20,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     _auth.authStateChanges().listen((User? user) {
       if (mounted) {
-        _timer = Timer(const Duration(seconds: 3), () {
+        _timer = Timer(const Duration(seconds: 1), () {
           if (user == null) {
             Navigator.pushNamedAndRemoveUntil(
                 context, '/log', (route) => false);
