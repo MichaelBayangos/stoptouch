@@ -41,11 +41,6 @@ class _ChildPageState extends State<ChildPage> {
       }
     });
 
-    dbref1.onValue.listen((event) {
-      setState(() {
-        restrictionValue = event.snapshot.value! as int;
-      });
-    });
     dbref2.onValue.listen((event) {
       setState(() {
         notif = event.snapshot.value.toString();
@@ -73,32 +68,42 @@ class _ChildPageState extends State<ChildPage> {
                       if (seconds == 30) {
                         warningNotif();
                       }
+                      setState(() {
+                        if (seconds == 0) {}
+                      });
                     } else {
                       timer.cancel();
                       dbRef.set(0);
                       dbref2.set('Time Phone Usage has been Set');
                       DevicePolicyManager.lockNow();
-                      restriction?.cancel();
-                      int resTime = restrictionValue! * 60;
-                      setState(() {});
-                      if (resTime != 0) {
-                        restriction = Timer.periodic(const Duration(seconds: 1),
-                            (restriction) {
+                      dbref1.onValue.listen((event) {
+                        setState(() {
+                          restrictionValue = event.snapshot.value! as int;
+                          restriction?.cancel();
+                          int resTime = restrictionValue! * 60;
                           setState(() {
                             if (resTime != 0) {
-                              resTime--;
-                              restrictionValue = resTime;
-                              DevicePolicyManager.lockNow();
-                            } else {
-                              restriction.cancel();
-                              dbref1.set(0);
+                              restriction = Timer.periodic(
+                                  const Duration(seconds: 1), (restriction) {
+                                setState(() {
+                                  if (resTime != 0) {
+                                    resTime--;
+                                    restrictionValue = resTime;
+                                    DevicePolicyManager.lockNow();
+                                  } else {
+                                    restriction.cancel();
+                                    dbref1.set(0);
+                                  }
+                                });
+                              });
                             }
                           });
                         });
-                      }
+                      });
                     }
                   });
                 });
+                if (timerValue == 0) {}
               }
             });
           });
