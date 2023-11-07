@@ -68,9 +68,6 @@ class _ChildPageState extends State<ChildPage> {
                       if (seconds == 30) {
                         warningNotif();
                       }
-                      setState(() {
-                        if (seconds == 0) {}
-                      });
                     } else {
                       timer.cancel();
                       dbRef.set(0);
@@ -103,7 +100,6 @@ class _ChildPageState extends State<ChildPage> {
                     }
                   });
                 });
-                if (timerValue == 0) {}
               }
             });
           });
