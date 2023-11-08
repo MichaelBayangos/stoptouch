@@ -122,7 +122,7 @@ class _ChildPageState extends State<ChildPage> {
   warningNotif() {
     AwesomeNotifications().createNotification(
         content: NotificationContent(
-      id: 11,
+      id: 12,
       channelKey: 'basic_channel',
       title: 'Warning Notification',
       body: 'You Only Have 30 seconds remaing',
