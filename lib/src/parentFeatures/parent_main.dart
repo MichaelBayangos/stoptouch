@@ -239,6 +239,7 @@ class _ParentMainPageState extends State<ParentMainPage> {
                         onPressed: () {
                           final dbr1 = FirebaseDatabase.instance.ref('Users');
                           dbr1.child(name).child('rules').update({
+                            'timer': 0,
                             'restriction': 0,
                             'notif': 'Your Parent Cancel Restriction'
                           });

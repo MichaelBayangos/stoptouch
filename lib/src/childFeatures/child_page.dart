@@ -56,6 +56,7 @@ class _ChildPageState extends State<ChildPage> {
           setState(() {
             timerValue = event.snapshot.value! as int;
             timer?.cancel();
+            restriction?.cancel();
             int seconds = timerValue! * 60;
             triggerNotif();
             setState(() {
