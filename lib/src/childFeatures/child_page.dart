@@ -72,7 +72,7 @@ class _ChildPageState extends State<ChildPage> {
                     } else {
                       timer.cancel();
                       dbRef.set(0);
-                      dbref2.set('no configuration at the moment.');
+                      noConfig();
                       DevicePolicyManager.lockNow();
                       dbref1.onValue.listen((event) {
                         setState(() {
@@ -126,6 +126,16 @@ class _ChildPageState extends State<ChildPage> {
       channelKey: 'basic_channel',
       title: 'Warning Notification',
       body: 'You Only Have 30 seconds remaing',
+    ));
+  }
+
+  noConfig() {
+    AwesomeNotifications().createNotification(
+        content: NotificationContent(
+      id: 11,
+      channelKey: 'basic_channel',
+      title: 'Notice',
+      body: 'no Configuration at the moment.',
     ));
   }
 
