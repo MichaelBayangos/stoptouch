@@ -72,6 +72,7 @@ class _ChildPageState extends State<ChildPage> {
                     } else {
                       timer.cancel();
                       dbRef.set(0);
+                      dbref2.set('no configuration at the moment.');
                       DevicePolicyManager.lockNow();
                       dbref1.onValue.listen((event) {
                         setState(() {
@@ -90,7 +91,6 @@ class _ChildPageState extends State<ChildPage> {
                                   } else {
                                     restriction.cancel();
                                     dbref1.set(0);
-                                    dbref2.set('Wait for your Parents to Configure your Device.');
                                   }
                                 });
                               });

@@ -241,7 +241,7 @@ class _ParentMainPageState extends State<ParentMainPage> {
                           dbr1.child(name).child('rules').update({
                             'timer': 0,
                             'restriction': 0,
-                            'notif': 'Your Parent Cancel Restriction'
+                            'notif': 'Configurations Canceled.'
                           });
                           showDialog(
                             context: context,
