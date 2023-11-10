@@ -14,14 +14,16 @@ class ChildPage extends StatefulWidget {
 
 class _ChildPageState extends State<ChildPage> {
   final _auth = FirebaseAuth.instance;
-  String timerValue = '';
-  String restrictionValue = '';
+  int? timerValue;
+  int? restrictionValue;
   String notif = '';
   Timer? timer;
   Timer? restriction;
 
   @override
   void initState() {
+    timerValue = 0;
+    restrictionValue = 0;
     super.initState();
     final User user = _auth.currentUser!;
     final userId = user.uid.substring(0, 6);
@@ -39,11 +41,6 @@ class _ChildPageState extends State<ChildPage> {
       }
     });
 
-    dbref1.onValue.listen((event) {
-      setState(() {
-        restrictionValue = event.snapshot.value.toString();
-      });
-    });
     dbref2.onValue.listen((event) {
       setState(() {
         notif = event.snapshot.value.toString();
@@ -57,9 +54,10 @@ class _ChildPageState extends State<ChildPage> {
         }
         if (mounted) {
           setState(() {
-            timerValue = event.snapshot.value.toString();
+            timerValue = event.snapshot.value! as int;
             timer?.cancel();
-            int seconds = int.tryParse(timerValue)! * 60;
+            restriction?.cancel();
+            int seconds = timerValue! * 60;
             triggerNotif();
             setState(() {
               if (seconds != 0) {
@@ -67,33 +65,39 @@ class _ChildPageState extends State<ChildPage> {
                   setState(() {
                     if (seconds != 0) {
                       seconds--;
-                      timerValue = seconds.toString();
+                      timerValue = seconds;
                       if (seconds == 30) {
                         warningNotif();
                       }
                     } else {
                       timer.cancel();
                       dbRef.set(0);
-                      dbref2.set('Time Phone Usage has been Set');
+                      noConfig();
                       DevicePolicyManager.lockNow();
-                      restriction?.cancel();
-                      int resTime = int.tryParse(restrictionValue)! * 60;
-                      setState(() {});
-                      if (resTime != 0) {
-                        restriction = Timer.periodic(const Duration(seconds: 1),
-                            (restriction) {
+                      dbref1.onValue.listen((event) {
+                        setState(() {
+                          restrictionValue = event.snapshot.value! as int;
+                          restriction?.cancel();
+                          int resTime = restrictionValue! * 60;
                           setState(() {
                             if (resTime != 0) {
-                              resTime--;
-                              restrictionValue = resTime.toString();
-                              DevicePolicyManager.lockNow();
-                            } else {
-                              restriction.cancel();
-                              dbref1.set(0);
+                              restriction = Timer.periodic(
+                                  const Duration(seconds: 1), (restriction) {
+                                setState(() {
+                                  if (resTime != 0) {
+                                    resTime--;
+                                    restrictionValue = resTime;
+                                    DevicePolicyManager.lockNow();
+                                  } else {
+                                    restriction.cancel();
+                                    dbref1.set(0);
+                                  }
+                                });
+                              });
                             }
                           });
                         });
-                      }
+                      });
                     }
                   });
                 });
@@ -118,10 +122,20 @@ class _ChildPageState extends State<ChildPage> {
   warningNotif() {
     AwesomeNotifications().createNotification(
         content: NotificationContent(
-      id: 11,
+      id: 12,
       channelKey: 'basic_channel',
       title: 'Warning Notification',
       body: 'You Only Have 30 seconds remaing',
+    ));
+  }
+
+  noConfig() {
+    AwesomeNotifications().createNotification(
+        content: NotificationContent(
+      id: 11,
+      channelKey: 'basic_channel',
+      title: 'Notice',
+      body: 'no Configuration at the moment.',
     ));
   }
 
@@ -175,7 +189,8 @@ class _ChildPageState extends State<ChildPage> {
                         const Text(
                             'Your Parents/guardian set time how long you will use your phone until it force lock'),
                         const SizedBox(height: 60),
-                        Text('Time remaining: $timerValue')
+                        Text(
+                            '${timerValue! ~/ 60}:${(timerValue! % 60).toString().padLeft(2, '0')}')
                       ],
                     ),
                   ),
@@ -201,8 +216,7 @@ class _ChildPageState extends State<ChildPage> {
                             'Your Parents/guardian set your time how long you will not able to use your phone.'),
                         const SizedBox(height: 60),
                         Text(
-                          'Restriction remaining: $restrictionValue',
-                        ),
+                            '${restrictionValue! ~/ 60}:${(restrictionValue! % 60).toString().padLeft(2, '0')}')
                       ],
                     ),
                   ),

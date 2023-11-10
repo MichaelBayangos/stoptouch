@@ -13,8 +13,8 @@ class ParentMainPage extends StatefulWidget {
 
 class _ParentMainPageState extends State<ParentMainPage> {
   final _formKey = GlobalKey<FormState>();
-  late String timerValue = '';
-  late String restrictionValue = '';
+  late int timerValue;
+  late int restrictionValue;
   late String notif = '';
   late String name = '';
 
@@ -141,7 +141,7 @@ class _ParentMainPageState extends State<ParentMainPage> {
                       }
                       return null;
                     },
-                    onSaved: (value) => timerValue = value!,
+                    onSaved: (value) => timerValue = int.parse(value!),
                   ),
                 ),
                 Container(
@@ -181,7 +181,7 @@ class _ParentMainPageState extends State<ParentMainPage> {
                       }
                       return null;
                     },
-                    onSaved: (value) => restrictionValue = value!,
+                    onSaved: (value) => restrictionValue = int.parse(value!),
                   ),
                 ),
                 Container(
@@ -224,51 +224,93 @@ class _ParentMainPageState extends State<ParentMainPage> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    elevation: 0,
-                    padding: const EdgeInsets.fromLTRB(80, 15, 80, 15),
-                    backgroundColor: Colors.blueAccent,
-                  ),
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-                      final dbr = FirebaseDatabase.instance.ref('Users');
-                      dbr.child(name).child('rules').set({
-                        'timer': timerValue,
-                        'restriction': restrictionValue,
-                        'notif': notif
-                      });
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text('Success'),
-                            content: const Text(
-                                'Your settings have been saved, Wait for the child device to Log In to apply Stop Touch configurations.'),
-                            actions: [
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Ok'))
-                            ],
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          elevation: 0,
+                          padding: const EdgeInsets.fromLTRB(60, 15, 60, 15),
+                          backgroundColor: Colors.redAccent,
+                        ),
+                        onPressed: () {
+                          final dbr1 = FirebaseDatabase.instance.ref('Users');
+                          dbr1.child(name).child('rules').update({
+                            'timer': 0,
+                            'restriction': 0,
+                            'notif': 'Configurations Canceled.'
+                          });
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text('Reminder'),
+                                content: const Text(
+                                    'Your child can use the device now'),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text('Ok'))
+                                ],
+                              );
+                            },
                           );
                         },
-                      );
-                      Timer(Duration(seconds: int.parse(timerValue) * 60 ~/ 2),
-                          () {
-                        triggerNotif();
-                      });
-                    }
-                  },
-                  child: const Text(
-                    'Set',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                        child: const Text(
+                          'Stop',
+                          style: TextStyle(color: Colors.white),
+                        )),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        elevation: 0,
+                        padding: const EdgeInsets.fromLTRB(60, 15, 60, 15),
+                        backgroundColor: Colors.blueAccent,
+                      ),
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          _formKey.currentState!.save();
+                          final dbr = FirebaseDatabase.instance.ref('Users');
+                          dbr.child(name).child('rules').set({
+                            'timer': timerValue,
+                            'restriction': restrictionValue,
+                            'notif': notif
+                          });
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text('Success'),
+                                content: const Text(
+                                    'Your settings have been saved, Wait for the child device to Log In to apply Stop Touch configurations.'),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text('Ok'))
+                                ],
+                              );
+                            },
+                          );
+                          Timer(Duration(seconds: (timerValue) * 60 ~/ 2), () {
+                            triggerNotif();
+                          });
+                        }
+                      },
+                      child: const Text(
+                        'Set',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    )
+                  ],
                 ),
                 const SizedBox(height: 10),
               ],
